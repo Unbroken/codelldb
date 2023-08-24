@@ -100,7 +100,7 @@ async function getPlatformPackageUrl(): Promise<Uri> {
     let id = `${platform}-${arch}`;
     let platformPackage = pp.platforms[id];
     if (platformPackage == undefined) {
-        throw new Error(`This platform (${id}) is not suported.`);
+        throw new Error(`This platform (${id}) is not supported.`);
     }
     return Uri.parse(pp.url.replace('${version}', pkg.version).replace('${platformPackage}', platformPackage));
 }
