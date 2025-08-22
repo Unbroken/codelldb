@@ -17,7 +17,7 @@ export function formatError(err: Error & { cause?: Error }): string {
         if (!err?.cause)
             break;
         result += '\nCaused by: ';
-        err = err.cause;
+        err = err.cause as Error & { cause?: Error };
     }
     return result;
 }

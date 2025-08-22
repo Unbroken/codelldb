@@ -131,7 +131,7 @@ async function download(srcUrl: Uri, destPath: string,
                             progress(downloaded, contentLength);
                         })
                     }
-                    pipeStm.on('finish', resolve);
+                    pipeStm.on('finish', () => resolve(undefined));
                     pipeStm.on('error', reject);
                     response.on('error', reject);
                 }
