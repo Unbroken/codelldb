@@ -29,29 +29,29 @@
 	},
 	"qna": "https://github.com/vadimcn/codelldb/discussions",
 	"engines": {
-		"vscode": "^1.61.0"
+		"vscode": ">=1.80.0"
 	},
 	"dependencies": {
 		"jsonc-parser": "^3.3.1",
 		"string-argv": "^0.3.2",
-		"yaml": "^1.10.0"
+		"yaml": "^2.8.1"
 	},
 	"devDependencies": {
-		"@types/vscode": "^1.60.0",
-		"@types/node": "^18.0.0",
-		"@types/mocha": "^10.0.0",
-		"@vscode/debugprotocol": "^1.53.0",
-		"@vscode/debugadapter-testsupport": "^1.51.0",
+		"@types/vscode": "^1.80.0",
+		"@types/node": "^22.17.2",
+		"@types/mocha": "^10.0.10",
+		"@vscode/debugprotocol": "^1.68.0",
+		"@vscode/debugadapter-testsupport": "^1.68.0",
 		"@vscode/test-cli": "^0.0.11",
 		"@vscode/test-electron": "^2.5.2",
 		"@vscode/vsce": "^3.6.0",
-		"typescript": "^4.7.0",
-		"mocha": "^10.8.1",
-		"source-map-support": "^0.5.12",
-		"mocha-suppress-logs": "^0.3.1",
-		"webpack": "^5.37.1",
-		"webpack-cli": "^4.7.0",
-		"ts-loader": "^8.0.0",
+		"typescript": "^5.9.2",
+		"mocha": "^11.7.1",
+		"source-map-support": "^0.5.21",
+		"mocha-suppress-logs": "^0.6.0",
+		"webpack": "^5.101.3",
+		"webpack-cli": "^6.0.1",
+		"ts-loader": "^9.5.2",
 		"json-schema-to-typescript": "^15.0.4",
 		"json-schema-merge-allof": "^0.8.1",
 		"@apidevtools/json-schema-ref-parser": "^13.0.1"
