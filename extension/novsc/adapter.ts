@@ -42,7 +42,7 @@ export async function start(options: AdapterStartOptions): Promise<async.cp.Chil
     // Check if workDir exists and is a directory, otherwise launch with default cwd.
     let workDir = options.workDir;
     if (workDir) {
-        let stat = await async.fs.stat(workDir).catch(_ => null);
+        let stat = await async.fs.stat(workDir).catch(_ => {});
         if (!stat || !stat.isDirectory())
             workDir = undefined;
     }
