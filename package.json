@@ -471,6 +471,12 @@
 						],
 						"scope": "resource",
 						"order": 999
+					},
+					"lldb.launch.library": {
+						"markdownDescription": "Which LLDB library to use.\n\nThis can be either a file path (recommended) or a directory, in which case platform-specific heuristics will be used to locate the actual library file.",
+						"type": "string",
+						"scope": "resource",
+						"order": 11
 					}
 				}
 			},
@@ -915,6 +921,10 @@
 									"Resolve locations using full source file path.",
 									"Resolve locations using file name only."
 								]
+							},
+							"library": {
+								"markdownDescription": "Which LLDB library to use.\n\nThis can be either a file path (recommended) or a directory, in which case platform-specific heuristics will be used to locate the actual library file.",
+								"type": "string"
 							}
 						},
 						"anyOf": [
@@ -994,6 +1004,9 @@
 							},
 							"breakpointMode": {
 								"$ref": "#/contributes/debuggers/0/configurationAttributes/launch/properties/breakpointMode"
+							},
+							"library": {
+								"$ref": "#/contributes/debuggers/0/configurationAttributes/launch/properties/library"
 							}
 						}
 					},
