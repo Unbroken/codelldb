@@ -85,8 +85,8 @@ class Extension implements DebugAdapterDescriptorFactory {
         subscriptions.push(commands.registerCommand('lldb.viewMemory', () => this.viewMemory()));
 
         subscriptions.push(workspace.onDidChangeConfiguration(event => {
-            if (event.affectsConfiguration('lldb.library')) {
-                this.adapterDylibsCache = null;
+            if (event.affectsConfiguration('lldb.library') || event.affectsConfiguration('lldb.launch.library')) {
+                this.adapterDylibCache.clear();
             }
             if (event.affectsConfiguration('lldb.rpcServer')) {
                 this.updateRpcServer();
@@ -242,12 +242,18 @@ class Extension implements DebugAdapterDescriptorFactory {
             delete session.configuration.sourceLanguages;
         }
 
+        // Extract library path from configuration (already expanded by VSCode)
+        let library = session.configuration.library;
+        if (library) {
+            delete session.configuration.library;
+        }
+
         let authToken = crypto.randomBytes(16).toString('base64');
         let connector = new ReverseAdapterConnector(authToken);
         let port = await connector.listen();
 
         try {
-            await this.startDebugAdapter(session.workspaceFolder, adapterSettings, port, authToken);
+            await this.startDebugAdapter(session.workspaceFolder, adapterSettings, port, authToken, library);
             await connector.accept();
             return new DebugAdapterInlineImplementation(connector);
         } catch (err) {
@@ -301,6 +307,7 @@ class Extension implements DebugAdapterDescriptorFactory {
         mergeConfig('sourceLanguages');
         mergeConfig('debugServer');
         mergeConfig('breakpointMode');
+        mergeConfig('library');
     }
 
     async getLaunchLessConfig(workspaceFolder: WorkspaceFolder, cancellation: CancellationToken) {
@@ -344,14 +351,15 @@ class Extension implements DebugAdapterDescriptorFactory {
         folder: WorkspaceFolder | undefined,
         adapterSettings: AdapterSettings,
         connectPort: number,
-        authToken: string
+        authToken: string,
+        library?: string
     ): Promise<ChildProcess> {
         let config = getExtensionConfig(folder);
         let adapterEnv = config.get<any>('adapterEnv', {});
         let verboseLogging = config.get<boolean>('verboseLogging');
         if (config.get<boolean>('useNativePDBReader'))
             adapterEnv['LLDB_USE_NATIVE_PDB_READER'] = 'true';
-        let [liblldb] = await this.getAdapterDylibs(config);
+        let liblldb = await this.getAdapterDylib(config, library, folder);
 
         output.appendLine('Launching adapter');
         output.appendLine(`liblldb: ${liblldb}`);
@@ -383,20 +391,34 @@ class Extension implements DebugAdapterDescriptorFactory {
         return adapterProcess;
     }
 
-    // Resolve paths of the native adapter libraries and cache them.
-    async getAdapterDylibs(config: WorkspaceConfiguration): Promise<[string]> {
-        if (!this.adapterDylibsCache) {
-            let liblldb = config.get<string>('library');
-            if (liblldb) {
-                liblldb = await adapter.findLibLLDB(liblldb)
-            } else {
-                liblldb = await adapter.findLibLLDB(path.join(this.context.extensionPath, 'lldb'));
-            }
-            this.adapterDylibsCache = [liblldb];
+    // Resolve path of the native adapter library and cache it per workspace.
+    async getAdapterDylib(config: WorkspaceConfiguration, library?: string, folder?: WorkspaceFolder): Promise<string> {
+        // Use library from debug configuration (already expanded by VSCode) or fall back to workspace setting
+        let requestedLib = library || config.get<string>('library') || '<default>';
+
+        // Create a composite cache key that includes workspace identity
+        let workspaceId = folder?.uri.fsPath || '<no-workspace>';
+        let cacheKey = `${workspaceId}::${requestedLib}`;
+
+        // Check if we have a cached result for this specific workspace and library path
+        let cacheEntry = this.adapterDylibCache.get(cacheKey);
+        if (cacheEntry) {
+            return cacheEntry;
         }
-        return this.adapterDylibsCache;
+
+        // Resolve the library path
+        let liblldb: string;
+        if (library || config.get<string>('library')) {
+            liblldb = await adapter.findLibLLDB(library || config.get<string>('library'));
+        } else {
+            liblldb = await adapter.findLibLLDB(path.join(this.context.extensionPath, 'lldb'));
+        }
+
+        // Cache the result with the composite key
+        this.adapterDylibCache.set(cacheKey, liblldb);
+        return liblldb;
     }
-    adapterDylibsCache: [string] = null;
+    adapterDylibCache: Map<string, string> = new Map();
 
     async checkPrerequisites(folder?: WorkspaceFolder): Promise<boolean> {
         if (!await install.ensurePlatformPackage(this.context, output, true))
