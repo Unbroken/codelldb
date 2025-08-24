@@ -329,6 +329,14 @@ class Extension implements DebugAdapterDescriptorFactory {
         let connector = new ReverseAdapterConnector(startOptions.authToken as string);
         startOptions.port = await connector.listen();
 
+
+        // Extract library path from configuration (already expanded by VSCode)
+        let library = session.configuration.library;
+        if (library) {
+            startOptions.liblldb = library;
+            delete session.configuration.library;
+        }
+
         try {
             await this.startDebugAdapter(startOptions);
             await connector.accept();
@@ -384,6 +392,7 @@ class Extension implements DebugAdapterDescriptorFactory {
         mergeConfig('sourceLanguages');
         mergeConfig('debugServer');
         mergeConfig('breakpointMode');
+        mergeConfig('library');
     }
 
     async getCargoLaunchConfigs(resource?: Uri) {
