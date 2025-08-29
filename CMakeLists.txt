@@ -220,8 +220,9 @@ endforeach()
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/vscodeignore-full ${Content})
 
 set(VsceOptions
-    --baseContentUrl https://github.com/vadimcn/codelldb/blob/v${VERSION}
-    --baseImagesUrl https://github.com/vadimcn/codelldb/raw/v${VERSION}
+    # Rewrite README/CHANGELOG relative links to point at master rather than a dev tag
+    --baseContentUrl https://github.com/vadimcn/codelldb/blob/master
+    --baseImagesUrl https://github.com/vadimcn/codelldb/raw/master
 )
 
 add_custom_target(vsix_bootstrap
