@@ -16,6 +16,15 @@ const __dirname = dirname(__filename);
 const extDir = resolve(__dirname, '..');
 const buildDir = resolve(extDir, 'build');
 
+function githubRequestHeaders(extra = {}) {
+	const headers = { 'User-Agent': 'codelldb-builder', ...extra };
+	const token = process.env.CODELLDB_GITHUB_TOKEN || process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+	if (token) {
+		headers['Authorization'] = `Bearer ${token}`;
+	}
+	return headers;
+}
+
 function run(cmd, args, opts = {}) {
 	console.log('[codelldb] Running:', cmd, args.map(a => a.includes(' ') ? `"${a}"` : a).join(' '));
 	return new Promise((resolvePromise, reject) => {
@@ -46,7 +55,7 @@ async function fetchJson(url) {
 	if (typeof fetch !== 'function') {
 		throw new Error('global fetch is not available in this Node runtime');
 	}
-	const res = await fetch(url, { headers: { 'User-Agent': 'codelldb-builder' } });
+	const res = await fetch(url, { headers: githubRequestHeaders({ 'Accept': 'application/vnd.github+json' }) });
 	if (!res.ok) {
 		throw new Error(`HTTP ${res.status} for ${url}`);
 	}
@@ -57,7 +66,7 @@ async function downloadFile(url, destPath) {
 	if (typeof fetch !== 'function') {
 		throw new Error('global fetch is not available in this Node runtime');
 	}
-	const res = await fetch(url, { headers: { 'User-Agent': 'codelldb-builder' } });
+	const res = await fetch(url, { headers: githubRequestHeaders() });
 	if (!res.ok || !res.body) {
 		throw new Error(`HTTP ${res.status} for ${url}`);
 	}
