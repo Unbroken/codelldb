@@ -33,6 +33,18 @@ export function expandDbgConfig(debugConfig: DebugConfiguration, dbgconfigConfig
 
     // Now expand dbgconfigs in the launch configuration.
     debugConfig = expandVariablesInObject(debugConfig, (type, key) => {
+        // Handle platform-specific variables (no type prefix)
+        if (!type) {
+            if (key === 'executableExtension') {
+                return process.platform === 'win32' ? '.exe' : '';
+            }
+            if (key === 'dynamicLibraryExtension') {
+                if (process.platform === 'win32') return '.dll';
+                if (process.platform === 'darwin') return '.dylib';
+                return '.so';
+            }
+        }
+        // Handle dbgconfig variables
         if (type == 'dbgconfig') {
             let value = dbgconfig[key];
             if (value == undefined)
