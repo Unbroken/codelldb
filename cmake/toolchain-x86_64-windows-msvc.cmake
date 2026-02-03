@@ -1,5 +1,5 @@
 set(LLVM_TRIPLE x86_64-pc-windows-msvc)
-set(CMAKE_C_COMPILER cl)
-set(CMAKE_CXX_COMPILER cl)
+set(CMAKE_C_COMPILER clang-cl)
+set(CMAKE_CXX_COMPILER clang-cl)
 set(TARGET_ARCH amd64)
 set(HEADER_ARCH "x86-64")
