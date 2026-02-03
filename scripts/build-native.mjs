@@ -261,7 +261,7 @@ async function tryCMakeBuild() {
 			platform = 'Win32';
 		}
 
-		cmakeArgs.push('-G', 'Visual Studio 17 2022', '-A', platform);
+		cmakeArgs.push('-G', 'Visual Studio 17 2022', '-A', platform, '-T', 'ClangCL');
 	} else {
 		cmakeArgs.push('-G', 'Ninja');
 	}
