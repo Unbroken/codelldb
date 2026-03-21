@@ -125,7 +125,8 @@ async function getProcessList(context: ExtensionContext, allUsers: boolean, opti
     let lines = await new Promise<string[]>((resolve, reject) => {
         let child = cp.spawn(lldbPath, args, {
             env: env,
-            stdio: ['ignore', 'pipe', 'ignore']
+            stdio: ['ignore', 'pipe', 'ignore'],
+            __priority: 'default',
         });
         child.on('error', err => reject(err));
         let lines = new Array();

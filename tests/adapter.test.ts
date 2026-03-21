@@ -719,7 +719,7 @@ function generateSuite(triple: string) {
 
             suiteSetup(() => {
                 // NB: log is not initialized at this point yet
-                debuggeeProc = cp.spawn(debuggee, ['inf_loop'], {});
+                debuggeeProc = cp.spawn(debuggee, ['inf_loop'], { __priority: 'default' } as any);
             })
 
             suiteTeardown(() => {
