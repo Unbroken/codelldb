@@ -53,7 +53,7 @@ suite('Extension Tests', () => {
             `--connect=${addrinfo.address}:${addrinfo.port}`,
             '--config={ token: secret }',
             'debuggee/debuggee',
-        ], { cwd: ext.extensionPath, stdio: 'pipe', env: { ...process.env, RUST_LOG: 'debug' }});
+        ], { cwd: ext.extensionPath, stdio: 'pipe', env: { ...process.env, RUST_LOG: 'debug' }, __priority: 'default' } as any);
         proc.stdout.on('data', buf => console.log(buf.toString()));
         proc.stderr.on('data', buf => console.error(buf.toString()));
 

@@ -55,7 +55,8 @@ export async function start(options: AdapterStartOptions): Promise<async.cp.Chil
     }
 
     return async.cp.spawn(executable, args, {
-        env: env, cwd: workDir, stdio: ['ignore', 'pipe', 'pipe']
+        env: env, cwd: workDir, stdio: ['ignore', 'pipe', 'pipe'],
+        __priority: 'default',
     });
 }
 
