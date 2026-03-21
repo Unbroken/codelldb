@@ -288,6 +288,7 @@ export class Cargo {
             stdio: ['ignore', 'pipe', 'pipe'],
             cwd: cargoCwd,
             env: cargoEnv,
+            __priority: 'default',
         }) as cp.ChildProcess & { exit: Promise<number> };
 
         cargo.exit = new Promise<number>((resolve, reject) => {
