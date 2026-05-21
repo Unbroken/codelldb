@@ -13,6 +13,8 @@ fn main() {
         build_config.include(dir);
     }
 
+    build_config.flag_if_supported("-Wno-invalid-specialization");
+
     if no_link_args {
         build_config.cpp_set_stdlib(None);
     } else {
