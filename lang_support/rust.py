@@ -47,7 +47,7 @@ def __lldb_init_module(debugger, internal_dict):  # pyright: ignore
     log.info(f'Rust formatters dir: {formatters}')
     lldb_lookup = path.join(formatters, 'lldb_lookup.py')
     lldb_commands = path.join(formatters, 'lldb_commands')
-    if not path.isfile(lldb_lookup) or not path.isfile(lldb_commands):
+    if not path.isfile(lldb_lookup):
         message = 'Could not find LLDB data formatters in your Rust toolchain.'
         if sysroot and '-msvc' in sysroot:
             message += '  For more information, please visit https://github.com/vadimcn/codelldb/wiki/Windows'
@@ -56,6 +56,10 @@ def __lldb_init_module(debugger, internal_dict):  # pyright: ignore
 
     codelldb.debugger_message('Loading Rust formatters from {}'.format(formatters))
     debugger.HandleCommand("command script import '{}'".format(lldb_lookup))
+
+    if not path.isfile(lldb_commands):
+        return
+
     with open(lldb_commands, 'rt') as f:
         for line in f:
             line = line.strip()
